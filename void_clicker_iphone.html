@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0b12">
+<title>VOID CLICKER</title>
+<style>
+:root{--bg:#0a0b12;--panel:#151827;--panel2:#1c2033;--cyan:#73fbd3;--gold:#ffd166;--pink:#ff5d8f;--text:#f3f5ff;--muted:#9299b8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:radial-gradient(ellipse at 50% -10%,#293052 0%,var(--bg) 55%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100dvh;overscroll-behavior:none}
+.app{max-width:540px;margin:auto;padding:calc(14px + env(safe-area-inset-top)) 15px calc(18px + env(safe-area-inset-bottom));min-height:100dvh;display:flex;flex-direction:column;gap:13px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:10px;letter-spacing:3px;color:var(--cyan);font-weight:900}.title{font-size:28px;line-height:1.1;font-weight:950;letter-spacing:1px;margin-top:4px}
+.save{font-size:11px;color:var(--muted);text-align:right;line-height:1.5}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.card{background:#151827d9;border:1px solid #ffffff12;border-radius:16px;padding:12px 14px}
+.label{font-size:10px;color:var(--muted);letter-spacing:1.5px;font-weight:800}.value{font-size:25px;font-weight:900;margin-top:3px;letter-spacing:-.5px}.sub{font-size:11px;color:var(--muted);margin-top:3px}
+.corearea{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 3px;min-height:235px}
+.core{width:min(57vw,220px);height:min(57vw,220px);max-width:220px;max-height:220px;border-radius:50%;border:1px solid #73fbd366;background:radial-gradient(circle at 35% 30%,#354c65 0%,#172537 35%,#0b111c 68%);box-shadow:0 0 0 9px #73fbd30a,0 0 0 20px #73fbd307,0 0 38px #73fbd324,inset 0 0 30px #73fbd318;display:grid;place-items:center;position:relative;cursor:pointer;touch-action:manipulation;user-select:none;transition:transform .07s}
+.core:before,.core:after{content:"";position:absolute;border-radius:50%;inset:13px;border:1px solid #73fbd329}.core:after{inset:28px;border-color:#ffd16635}
+.core:active{transform:scale(.96)}
+.orb{font-size:70px;filter:drop-shadow(0 0 15px #73fbd366);line-height:1}
+.corehint{font-size:11px;letter-spacing:3px;color:var(--cyan);font-weight:900;margin-top:15px}
+.float{position:absolute;font-size:22px;font-weight:950;color:var(--gold);pointer-events:none;text-shadow:0 3px 15px #000;animation:float .65s ease-out forwards;z-index:5}
+@keyframes float{from{opacity:1;transform:translate(-50%,0) scale(.8)}to{opacity:0;transform:translate(-50%,-65px) scale(1.25)}}
+.progressbox{padding:13px 14px;background:#151827d9;border:1px solid #ffffff12;border-radius:15px}
+.progtop{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:8px}.progtop span:last-child{color:var(--muted)}
+.track{height:7px;border-radius:99px;background:#080a10;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),#6bb9ff);border-radius:99px;transition:width .2s}
+.sectiontitle{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:900;letter-spacing:2px;margin:3px 2px 0}.sectiontitle span{color:var(--muted);font-size:10px;letter-spacing:1px}
+.upgrades{display:flex;flex-direction:column;gap:8px}
+.upgrade{display:flex;align-items:center;gap:11px;padding:12px;background:linear-gradient(120deg,#171b2b,#111420);border:1px solid #ffffff13;border-radius:15px}
+.icon{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;background:#73fbd315;font-size:23px;flex-shrink:0}
+.info{flex:1;min-width:0}.name{font-size:13px;font-weight:850}.desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.35}.level{font-size:10px;color:var(--cyan);margin-top:4px}
+.buy{border:0;border-radius:11px;background:var(--cyan);color:#09110f;font-weight:950;padding:10px 9px;min-width:88px;font-size:12px;line-height:1.3}.buy small{display:block;font-size:9px;font-weight:800;opacity:.7;margin-top:2px}.buy:disabled{background:#2a2e3d;color:#717990}
+.footer{display:flex;gap:8px;margin-top:2px}.secondary{flex:1;background:#151827;border:1px solid #ffffff16;color:var(--muted);border-radius:11px;padding:11px;font-size:11px;font-weight:800}
+.toast{position:fixed;left:50%;bottom:calc(25px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#222940;color:var(--text);padding:11px 16px;border-radius:12px;font-size:12px;transition:.2s;pointer-events:none;white-space:nowrap;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-height:800px){.corearea{min-height:260px}.core{width:220px;height:220px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><div class="brand">IDLE UNIVERSE / 001</div><div class="title">VOID CLICKER</div></div><div class="save">АВТОСОХРАНЕНИЕ<br><strong id="saveState">включено</strong></div></header>
+<div class="stats">
+ <div class="card"><div class="label">ЭНЕРГИЯ</div><div class="value" id="energy">0</div><div class="sub" id="rate">+0 в секунду</div></div>
+ <div class="card"><div class="label">ВСЕГО ДОБЫТО</div><div class="value" id="total">0</div><div class="sub" id="tapPower">+1 за клик</div></div>
+</div>
+<div class="corearea">
+ <button class="core" id="core" aria-label="Добывать энергию"><span class="orb">✦</span></button>
+ <div class="corehint">НАЖМИ НА ЯДРО</div>
+</div>
+<div class="progressbox"><div class="progtop"><span id="rank">УРОВЕНЬ 1 · ИСКРА</span><span id="next">До уровня: 100</span></div><div class="track"><div class="bar" id="bar"></div></div></div>
+<div class="sectiontitle">УЛУЧШЕНИЯ <span>ПОКУПАЙ И РАСТИ</span></div>
+<div class="upgrades" id="upgrades"></div>
+<div class="footer"><button class="secondary" id="saveBtn">СОХРАНИТЬ</button><button class="secondary" id="resetBtn">СБРОСИТЬ ПРОГРЕСС</button></div>
+</div><div class="toast" id="toast"></div>
+<script>
+(()=>{
+const fmt=n=>{if(n<1000)return Math.floor(n).toLocaleString('ru-RU');const units=['K','M','B','T','Qa','Qi'];let i=-1;while(n>=1000&&i<units.length-1){n/=1000;i++;}return n.toFixed(n<10?1:0)+units[i];};
+const defs=[
+{id:'finger',icon:'👆',name:'Усиленный импульс',desc:'Каждый клик приносит больше энергии.',base:15,growth:1.55,kind:'tap',amount:1},
+{id:'drone',icon:'🛰️',name:'Дрон-сборщик',desc:'Автоматически добывает энергию каждую секунду.',base:35,growth:1.48,kind:'auto',amount:1},
+{id:'reactor',icon:'⚛️',name:'Мини-реактор',desc:'Мощный источник пассивной энергии.',base:180,growth:1.52,kind:'auto',amount:7},
+{id:'quantum',icon:'🌀',name:'Квантовый двигатель',desc:'Ускоряет производство энергии.',base:900,growth:1.58,kind:'auto',amount:35}
+];
+let s={energy:0,total:0,tap:1,auto:0,levels:{finger:0,drone:0,reactor:0,quantum:0},last:Date.now()},toastTimer;
+const $=id=>document.getElementById(id);
+function load(){try{const raw=localStorage.getItem('voidClickerSave');if(raw){const old=JSON.parse(raw);s={...s,...old,levels:{...s.levels,...old.levels}};const away=Math.max(0,Math.min((Date.now()-(s.last||Date.now()))/1000,8*3600));const gain=away*s.auto;s.energy+=gain;s.total+=gain;if(gain>0)showToast('Пока тебя не было: +'+fmt(gain)+' энергии');}}catch(e){}}
+function save(){s.last=Date.now();try{localStorage.setItem('voidClickerSave',JSON.stringify(s));$('saveState').textContent='сохранено';}catch(e){$('saveState').textContent='только в сессии';}}
+function cost(d){return Math.floor(d.base*Math.pow(d.growth,s.levels[d.id]));}
+function recalc(){s.tap=1+s.levels.finger*1;s.auto=s.levels.drone*1+s.levels.reactor*7+s.levels.quantum*35;}
+function level(){return Math.floor(Math.sqrt(s.total/100))+1;}
+function render(){
+ recalc();$('energy').textContent=fmt(s.energy);$('total').textContent=fmt(s.total);$('rate').textContent='+'+fmt(s.auto)+' в секунду';$('tapPower')='';$('tapPower').textContent='+'+fmt(s.tap)+' за клик';
+ const lv=level(),floor=(lv-1)*(lv-1)*100,ceil=lv*lv*100;$('rank').textContent='УРОВЕНЬ '+lv+' · '+(lv<3?'ИСКРА':lv<6?'СОЗИДАТЕЛЬ':lv<10?'АРХИТЕКТОР':'ПОВЕЛИТЕЛЬ ПУСТОТЫ');$('next').textContent='До уровня: '+fmt(Math.max(0,ceil-s.total));$('bar').style.width=Math.min(100,Math.max(0,(s.total-floor)/(ceil-floor)*100))+'%';
+ $('upgrades').innerHTML='';for(const d of defs){const c=cost(d),lvl=s.levels[d.id],el=document.createElement('div');el.className='upgrade';el.innerHTML=`<div class="icon">${d.icon}</div><div class="info"><div class="name">${d.name}</div><div class="desc">${d.desc}</div><div class="level">УРОВЕНЬ ${lvl}</div></div><button class="buy" ${s.energy<c?'disabled':''}>${fmt(c)}<small>ЭНЕРГИИ</small></button>`;el.querySelector('button').addEventListener('click',()=>buy(d));$('upgrades').appendChild(el);}
+}
+function buy(d){const c=cost(d);if(s.energy<c){showToast('Пока не хватает энергии');return;}s.energy-=c;s.levels[d.id]++;recalc();render();save();showToast('Улучшение куплено!');}
+function clickCore(e){s.energy+=s.tap;s.total+=s.tap;render();const r=$('core').getBoundingClientRect(),x=e&&e.clientX?e.clientX:r.left+r.width/2,y=e&&e.clientY?e.clientY:r.top+r.height/2;const f=document.createElement('span');f.className='float';f.textContent='+'+fmt(s.tap);f.style.left=x+'px';f.style.top=y+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),700);if(Math.floor(s.total/100)!==Math.floor((s.total-s.tap)/100))showToast('Новый уровень!');}
+function showToast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1900);}
+$('core').addEventListener('pointerdown',e=>{e.preventDefault();clickCore(e);});
+$('saveBtn').addEventListener('click',()=>{save();showToast('Прогресс сохранён на этом устройстве');});
+$('resetBtn').addEventListener('click',()=>{if(confirm('Точно сбросить весь прогресс? Это нельзя отменить.')){localStorage.removeItem('voidClickerSave');s={energy:0,total:0,tap:1,auto:0,levels:{finger:0,drone:0,reactor:0,quantum:0},last:Date.now()};render();save();showToast('Начинаем с нуля');}});
+load();recalc();render();let last=performance.now();setInterval(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,1);last=now;if(s.auto>0){const gain=s.auto*dt;s.energy+=gain;s.total+=gain;render();}if(Date.now()-s.last>5000)save();},250);
+})();
+</script>
+</body></html>
